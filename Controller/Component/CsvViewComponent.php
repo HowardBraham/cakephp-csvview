@@ -75,23 +75,33 @@ class CsvViewComponent extends Component {
  *
  * @param array $extract an array of Hash::extract() compatible paths
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
+ * @param boolean $includeClassname if true, the class name will be included in the default generated titles
+ * @param boolean $humanReadable if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
  * @return array an array of user-friendly headers, matching the passed in $extract array
  */
-	public function prepareHeaderFromExtract($extract, $customHeaders = array()) {
+	public function prepareHeaderFromExtract($extract, $customHeaders = array(), $includeClassname = true, $humanReadable = true) {
 		$header = array();
 		foreach ($extract as $fullPath) {
 			if (!empty($customHeaders[$fullPath])) {
 				$header[] = $customHeaders[$fullPath];
 			} else {
 				$pathParts = explode('.', $fullPath);
-				$model = $pathParts[count($pathParts) - 2];
-				$model = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $model);
-
+				
 				$column = $pathParts[count($pathParts) - 1];
-				$column = str_replace('_', ' ', $column);
-				$column = ucwords($column);
-
-				$header[] = $model . ' ' . $column;
+				
+				if($humanReadable) {
+					$column = str_replace('_', ' ', $column);
+					$column = ucwords($column);
+				}
+				
+				if($includeClassname) {
+					$model = $pathParts[count($pathParts) - 2];
+					$model = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $model);
+					$header[] = $model . ' ' . $column;
+				}
+				else {
+					$header[] = $column;
+				}
 			}
 		}
 
@@ -105,13 +115,15 @@ class CsvViewComponent extends Component {
  * @param array $excludePaths an array of Hash::extract() compatible paths to be excluded
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
  * @param boolean $includeHeader if true, a header will be included in the exported CSV.
+ * @param boolean $includeClassname if true, the class name will be included in the default generated titles
+ * @param boolean $humanReadable if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
  * @return void
  */
-	public function quickExport($data, $excludePaths = array(), $customHeaders = array(), $includeHeader = true) {
+	public function quickExport($data, $excludePaths = array(), $customHeaders = array(), $includeHeader = true, $includeClassname = true, $humanReadable = true) {
 		$_serialize = 'data';
 		$_extract = $this->prepareExtractFromFindResults($data, $excludePaths);
 		if ($includeHeader) {
-			$_header = $this->prepareHeaderFromExtract($_extract, $customHeaders);
+			$_header = $this->prepareHeaderFromExtract($_extract, $customHeaders, $includeClassname, $humanReadable);
 		}
 		$this->controller->viewClass = 'CsvView.Csv';
 		$this->controller->set(compact('data', '_serialize', '_header', '_extract'));
