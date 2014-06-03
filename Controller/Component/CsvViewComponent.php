@@ -45,9 +45,9 @@ class CsvViewComponent extends Component {
  * Recursively searches a single row from the results of a model find('all') and
  * adds all unique Hash::extract() compatible paths to $extract
  *
+ * @param array &$extract reference to the array containing all unique paths
  * @param array $dataRow a single row from the results of a model find('all')
  * @param array $excludePaths an array of Hash::extract() compatible paths to be excluded
- * @param array $extract reference to the array containing all unique paths
  * @param string $parentPath Hash::extract() compatible string of all paths up until this point (for deep nested arrays)
  * @return void
  */
@@ -86,20 +86,19 @@ class CsvViewComponent extends Component {
 				$header[] = $customHeaders[$fullPath];
 			} else {
 				$pathParts = explode('.', $fullPath);
-				
+
 				$column = $pathParts[count($pathParts) - 1];
-				
-				if($humanReadable) {
+
+				if ($humanReadable) {
 					$column = str_replace('_', ' ', $column);
 					$column = ucwords($column);
 				}
-				
-				if($includeClassname) {
+
+				if ($includeClassname) {
 					$model = $pathParts[count($pathParts) - 2];
 					$model = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $model);
 					$header[] = $model . ' ' . $column;
-				}
-				else {
+				} else {
 					$header[] = $column;
 				}
 			}
