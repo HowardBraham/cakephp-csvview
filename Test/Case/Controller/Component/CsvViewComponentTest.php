@@ -84,6 +84,42 @@ class CsvViewComponentTest extends CakeTestCase {
 	);
 
 /**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with includeClassname=false
+ * @var array
+ */
+	protected $_exampleHeaderIncludeClassnameFalse = array(
+		'Name',
+		'Number of People', // overriding City.population
+		'Name',
+		'Name',
+		'Name',
+	);
+
+/**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with humanReadable=false
+ * @var array
+ */
+	protected $_exampleHeaderHumanReadableFalse = array(
+		'City.name',
+		'Number of People', // overriding City.population
+		'State.name',
+		'Country.name',
+		'Continent.name',
+	);
+
+/**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with includeClassname=false and humanReadable=false
+ * @var array
+ */
+	protected $_exampleHeaderIncludeClassnameFalseHumanReadableFalse = array(
+		'name',
+		'Number of People', // overriding City.population
+		'name',
+		'name',
+		'name',
+	);
+
+/**
  * Example $_extract array, with multi word columns / models included
  * @var array
  */
@@ -98,11 +134,44 @@ class CsvViewComponentTest extends CakeTestCase {
  * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above
  * @var array
  */
-	protected $__exampleHeader2 = array(
+	protected $_exampleHeader2 = array(
 		'City Population',
 		'My Custom Title', // overriding State.name
 		'Country Multi Word Column',
 		'Multi Word Model Column',
+	);
+
+/**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with includeClassname=false
+ * @var array
+ */
+	protected $_exampleHeader2IncludeClassnameFalse = array(
+		'Population',
+		'My Custom Title', // overriding State.name
+		'Multi Word Column',
+		'Column',
+	);
+
+/**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with humanReadable=false
+ * @var array
+ */
+	protected $_exampleHeader2HumanReadableFalse = array(
+		'City.population',
+		'My Custom Title', // overriding State.name
+		'Country.multi_word_column',
+		'MultiWordModel.column',
+	);
+
+/**
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with includeClassname=false and humanReadable=false
+ * @var array
+ */
+	protected $_exampleHeader2IncludeClassnameFalseHumanReadableFalse = array(
+		'population',
+		'My Custom Title', // overriding State.name
+		'multi_word_column',
+		'column',
 	);
 
 /**
@@ -140,7 +209,25 @@ class CsvViewComponentTest extends CakeTestCase {
 	public function testPrepareHeaderFromExtract() {
 		$customHeaders = array('State.name' => 'My Custom Title');
 		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders);
-		$this->assertEqual($this->__exampleHeader2, $header);
+		$this->assertEqual($this->_exampleHeader2, $header);
+	}
+
+/**
+ * testPrepareHeaderFromExtractWithOptions method
+ *
+ * @return void
+ */
+	public function testPrepareHeaderFromExtractWithOptions() {
+		$customHeaders = array('State.name' => 'My Custom Title');
+
+		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("includeClassname" => false));
+		$this->assertEqual($this->_exampleHeader2IncludeClassnameFalse, $header);
+
+		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("humanReadable" => false));
+		$this->assertEqual($this->_exampleHeader2HumanReadableFalse, $header);
+
+		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("includeClassname" => false, "humanReadable" => false));
+		$this->assertEqual($this->_exampleHeader2IncludeClassnameFalseHumanReadableFalse, $header);
 	}
 
 /**
@@ -168,6 +255,24 @@ class CsvViewComponentTest extends CakeTestCase {
 	public function testQuickExportNoHeaders() {
 		$excludePaths = array('State.excluded_column');
 		$customHeaders = array('City.population' => 'Number of People');
+		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeHeader" => false));
+
+		$this->assertEqual($this->_exampleNested, $this->Controller->viewVars['data']);
+		$this->assertEqual('data', $this->Controller->viewVars['_serialize']);
+		$this->assertEqual($this->_exampleExtract, $this->Controller->viewVars['_extract']);
+		$hasHeader = (empty($this->Controller->viewVars['_header'])) ? false : true;
+		$this->assertFalse($hasHeader);
+		$this->assertEqual('CsvView.Csv', $this->Controller->viewClass);
+	}
+
+/**
+ * testQuickExportNoHeadersBC method (tests backwards compatibility)
+ *
+ * @return void
+ */
+	public function testQuickExportNoHeadersBC() {
+		$excludePaths = array('State.excluded_column');
+		$customHeaders = array('City.population' => 'Number of People');
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, false);
 
 		$this->assertEqual($this->_exampleNested, $this->Controller->viewVars['data']);
@@ -176,6 +281,25 @@ class CsvViewComponentTest extends CakeTestCase {
 		$hasHeader = (empty($this->Controller->viewVars['_header'])) ? false : true;
 		$this->assertFalse($hasHeader);
 		$this->assertEqual('CsvView.Csv', $this->Controller->viewClass);
+	}
+
+/**
+ * testQuickExportNoHeadersWithOptions method
+ *
+ * @return void
+ */
+	public function testQuickExportWithOptions() {
+		$excludePaths = array('State.excluded_column');
+		$customHeaders = array('City.population' => 'Number of People');
+
+		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeClassname" => false));
+		$this->assertEqual($this->_exampleHeaderIncludeClassnameFalse, $this->Controller->viewVars['_header']);
+
+		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("humanReadable" => false));
+		$this->assertEqual($this->_exampleHeaderHumanReadableFalse, $this->Controller->viewVars['_header']);
+
+		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeClassname" => false, "humanReadable" => false));
+		$this->assertEqual($this->_exampleHeaderIncludeClassnameFalseHumanReadableFalse, $this->Controller->viewVars['_header']);
 	}
 
 /**

@@ -75,11 +75,13 @@ class CsvViewComponent extends Component {
  *
  * @param array $extract an array of Hash::extract() compatible paths
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
- * @param boolean $includeClassname if true, the class name will be included in the default generated titles
- * @param boolean $humanReadable if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
+ * @param array $options an array of options: "includeClassname" => if true, the class name will be included in the default generated titles, "humanReadable" => if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased 
  * @return array an array of user-friendly headers, matching the passed in $extract array
  */
-	public function prepareHeaderFromExtract($extract, $customHeaders = array(), $includeClassname = true, $humanReadable = true) {
+	public function prepareHeaderFromExtract($extract, $customHeaders = array(), $options = array()) {
+		$defaults = array("includeClassname" => true, "humanReadable" => true);
+		$options += $defaults;
+
 		$header = array();
 		foreach ($extract as $fullPath) {
 			if (!empty($customHeaders[$fullPath])) {
@@ -89,15 +91,20 @@ class CsvViewComponent extends Component {
 
 				$column = $pathParts[count($pathParts) - 1];
 
-				if ($humanReadable) {
+				if ($options["humanReadable"]) {
 					$column = str_replace('_', ' ', $column);
 					$column = ucwords($column);
 				}
 
-				if ($includeClassname) {
+				if ($options["includeClassname"]) {
 					$model = $pathParts[count($pathParts) - 2];
-					$model = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $model);
-					$header[] = $model . ' ' . $column;
+
+					if ($options["humanReadable"]) {
+						$model = preg_replace('/(?<! )(?<!^)[A-Z]/', ' $0', $model);
+						$header[] = $model . ' ' . $column;
+					} else {
+						$header[] = $model . '.' . $column;
+					}
 				} else {
 					$header[] = $column;
 				}
@@ -113,16 +120,22 @@ class CsvViewComponent extends Component {
  * @param array $data the results of a model find('all') call.
  * @param array $excludePaths an array of Hash::extract() compatible paths to be excluded
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
- * @param boolean $includeHeader if true, a header will be included in the exported CSV.
- * @param boolean $includeClassname if true, the class name will be included in the default generated titles
- * @param boolean $humanReadable if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
+ * @param array $options an array of options: "includeHeader" => if true, a header will be included in the exported CSV, "includeClassname" => if true, the class name will be included in the default generated titles, "humanReadable" => if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
  * @return void
  */
-	public function quickExport($data, $excludePaths = array(), $customHeaders = array(), $includeHeader = true, $includeClassname = true, $humanReadable = true) {
+	public function quickExport($data, $excludePaths = array(), $customHeaders = array(), $options = array()) {
+		// Maintain backwards compatiblity if someone passes a boolean includeHeader instead of an options array
+		if (!is_array($options)) {
+			$options = array("includeHeader" => (bool)$options);
+		}
+
+		$defaults = array("includeHeader" => true, "includeClassname" => true, "humanReadable" => true);
+		$options += $defaults;
+
 		$_serialize = 'data';
 		$_extract = $this->prepareExtractFromFindResults($data, $excludePaths);
-		if ($includeHeader) {
-			$_header = $this->prepareHeaderFromExtract($_extract, $customHeaders, $includeClassname, $humanReadable);
+		if ($options["includeHeader"]) {
+			$_header = $this->prepareHeaderFromExtract($_extract, $customHeaders, $options);
 		}
 		$this->controller->viewClass = 'CsvView.Csv';
 		$this->controller->set(compact('data', '_serialize', '_header', '_extract'));
