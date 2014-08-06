@@ -61,6 +61,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareExtractFromFindResults for $_exampleNested array above
+ *
  * @var array
  */
 	protected $_exampleExtract = array(
@@ -73,6 +74,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract array above
+ *
  * @var array
  */
 	protected $_exampleHeader = array(
@@ -85,6 +87,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with includeClassname=false
+ *
  * @var array
  */
 	protected $_exampleHeaderIncludeClassnameFalse = array(
@@ -97,6 +100,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with humanReadable=false
+ *
  * @var array
  */
 	protected $_exampleHeaderHumanReadableFalse = array(
@@ -108,7 +112,9 @@ class CsvViewComponentTest extends CakeTestCase {
 	);
 
 /**
- * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with includeClassname=false and humanReadable=false
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract array above with includeClassname=false
+ * and humanReadable=false
+ *
  * @var array
  */
 	protected $_exampleHeaderIncludeClassnameFalseHumanReadableFalse = array(
@@ -121,6 +127,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Example $_extract array, with multi word columns / models included
+ *
  * @var array
  */
 	protected $_exampleExtract2 = array(
@@ -132,6 +139,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above
+ *
  * @var array
  */
 	protected $_exampleHeader2 = array(
@@ -143,6 +151,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with includeClassname=false
+ *
  * @var array
  */
 	protected $_exampleHeader2IncludeClassnameFalse = array(
@@ -154,6 +163,7 @@ class CsvViewComponentTest extends CakeTestCase {
 
 /**
  * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with humanReadable=false
+ *
  * @var array
  */
 	protected $_exampleHeader2HumanReadableFalse = array(
@@ -164,7 +174,9 @@ class CsvViewComponentTest extends CakeTestCase {
 	);
 
 /**
- * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with includeClassname=false and humanReadable=false
+ * Expected output of prepareHeaderFromExtract for $_exampleExtract2 array above with includeClassname=false
+ * and humanReadable=false
+ *
  * @var array
  */
 	protected $_exampleHeader2IncludeClassnameFalseHumanReadableFalse = array(
@@ -198,7 +210,7 @@ class CsvViewComponentTest extends CakeTestCase {
 	public function testPrepareExtractFromFindResults() {
 		$excludePaths = array('State.excluded_column');
 		$extract = $this->CsvViewComponent->prepareExtractFromFindResults($this->_exampleNested, $excludePaths);
-		$this->assertEqual($this->_exampleExtract, $extract);
+		$this->assertEquals($this->_exampleExtract, $extract);
 	}
 
 /**
@@ -209,7 +221,7 @@ class CsvViewComponentTest extends CakeTestCase {
 	public function testPrepareHeaderFromExtract() {
 		$customHeaders = array('State.name' => 'My Custom Title');
 		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders);
-		$this->assertEqual($this->_exampleHeader2, $header);
+		$this->assertEquals($this->_exampleHeader2, $header);
 	}
 
 /**
@@ -221,13 +233,13 @@ class CsvViewComponentTest extends CakeTestCase {
 		$customHeaders = array('State.name' => 'My Custom Title');
 
 		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("includeClassname" => false));
-		$this->assertEqual($this->_exampleHeader2IncludeClassnameFalse, $header);
+		$this->assertEquals($this->_exampleHeader2IncludeClassnameFalse, $header);
 
 		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("humanReadable" => false));
-		$this->assertEqual($this->_exampleHeader2HumanReadableFalse, $header);
+		$this->assertEquals($this->_exampleHeader2HumanReadableFalse, $header);
 
 		$header = $this->CsvViewComponent->prepareHeaderFromExtract($this->_exampleExtract2, $customHeaders, array("includeClassname" => false, "humanReadable" => false));
-		$this->assertEqual($this->_exampleHeader2IncludeClassnameFalseHumanReadableFalse, $header);
+		$this->assertEquals($this->_exampleHeader2IncludeClassnameFalseHumanReadableFalse, $header);
 	}
 
 /**
@@ -240,11 +252,11 @@ class CsvViewComponentTest extends CakeTestCase {
 		$customHeaders = array('City.population' => 'Number of People');
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders);
 
-		$this->assertEqual($this->_exampleNested, $this->Controller->viewVars['data']);
-		$this->assertEqual('data', $this->Controller->viewVars['_serialize']);
-		$this->assertEqual($this->_exampleExtract, $this->Controller->viewVars['_extract']);
-		$this->assertEqual($this->_exampleHeader, $this->Controller->viewVars['_header']);
-		$this->assertEqual('CsvView.Csv', $this->Controller->viewClass);
+		$this->assertEquals($this->_exampleNested, $this->Controller->viewVars['data']);
+		$this->assertEquals('data', $this->Controller->viewVars['_serialize']);
+		$this->assertEquals($this->_exampleExtract, $this->Controller->viewVars['_extract']);
+		$this->assertEquals($this->_exampleHeader, $this->Controller->viewVars['_header']);
+		$this->assertEquals('CsvView.Csv', $this->Controller->viewClass);
 	}
 
 /**
@@ -257,12 +269,12 @@ class CsvViewComponentTest extends CakeTestCase {
 		$customHeaders = array('City.population' => 'Number of People');
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeHeader" => false));
 
-		$this->assertEqual($this->_exampleNested, $this->Controller->viewVars['data']);
-		$this->assertEqual('data', $this->Controller->viewVars['_serialize']);
-		$this->assertEqual($this->_exampleExtract, $this->Controller->viewVars['_extract']);
+		$this->assertEquals($this->_exampleNested, $this->Controller->viewVars['data']);
+		$this->assertEquals('data', $this->Controller->viewVars['_serialize']);
+		$this->assertEquals($this->_exampleExtract, $this->Controller->viewVars['_extract']);
 		$hasHeader = (empty($this->Controller->viewVars['_header'])) ? false : true;
 		$this->assertFalse($hasHeader);
-		$this->assertEqual('CsvView.Csv', $this->Controller->viewClass);
+		$this->assertEquals('CsvView.Csv', $this->Controller->viewClass);
 	}
 
 /**
@@ -275,12 +287,12 @@ class CsvViewComponentTest extends CakeTestCase {
 		$customHeaders = array('City.population' => 'Number of People');
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, false);
 
-		$this->assertEqual($this->_exampleNested, $this->Controller->viewVars['data']);
-		$this->assertEqual('data', $this->Controller->viewVars['_serialize']);
-		$this->assertEqual($this->_exampleExtract, $this->Controller->viewVars['_extract']);
+		$this->assertEquals($this->_exampleNested, $this->Controller->viewVars['data']);
+		$this->assertEquals('data', $this->Controller->viewVars['_serialize']);
+		$this->assertEquals($this->_exampleExtract, $this->Controller->viewVars['_extract']);
 		$hasHeader = (empty($this->Controller->viewVars['_header'])) ? false : true;
 		$this->assertFalse($hasHeader);
-		$this->assertEqual('CsvView.Csv', $this->Controller->viewClass);
+		$this->assertEquals('CsvView.Csv', $this->Controller->viewClass);
 	}
 
 /**
@@ -293,13 +305,13 @@ class CsvViewComponentTest extends CakeTestCase {
 		$customHeaders = array('City.population' => 'Number of People');
 
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeClassname" => false));
-		$this->assertEqual($this->_exampleHeaderIncludeClassnameFalse, $this->Controller->viewVars['_header']);
+		$this->assertEquals($this->_exampleHeaderIncludeClassnameFalse, $this->Controller->viewVars['_header']);
 
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("humanReadable" => false));
-		$this->assertEqual($this->_exampleHeaderHumanReadableFalse, $this->Controller->viewVars['_header']);
+		$this->assertEquals($this->_exampleHeaderHumanReadableFalse, $this->Controller->viewVars['_header']);
 
 		$header = $this->CsvViewComponent->quickExport($this->_exampleNested, $excludePaths, $customHeaders, array("includeClassname" => false, "humanReadable" => false));
-		$this->assertEqual($this->_exampleHeaderIncludeClassnameFalseHumanReadableFalse, $this->Controller->viewVars['_header']);
+		$this->assertEquals($this->_exampleHeaderIncludeClassnameFalseHumanReadableFalse, $this->Controller->viewVars['_header']);
 	}
 
 /**

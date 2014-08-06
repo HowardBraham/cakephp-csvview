@@ -75,7 +75,10 @@ class CsvViewComponent extends Component {
  *
  * @param array $extract an array of Hash::extract() compatible paths
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
- * @param array $options an array of options: "includeClassname" => if true, the class name will be included in the default generated titles, "humanReadable" => if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased 
+ * @param array $options an array of options:
+ *    "includeClassname" => if true, the class name will be included in the default generated titles,
+ *    "humanReadable" => if true, underscores in variable names will be replaced by spaces,
+ *    and the first character of each word will be uppercased 
  * @return array an array of user-friendly headers, matching the passed in $extract array
  */
 	public function prepareHeaderFromExtract($extract, $customHeaders = array(), $options = array()) {
@@ -120,7 +123,11 @@ class CsvViewComponent extends Component {
  * @param array $data the results of a model find('all') call.
  * @param array $excludePaths an array of Hash::extract() compatible paths to be excluded
  * @param array $customHeaders array of 'Hash.Path' => 'Custom Title' pairs, to override default generated titles
- * @param array $options an array of options: "includeHeader" => if true, a header will be included in the exported CSV, "includeClassname" => if true, the class name will be included in the default generated titles, "humanReadable" => if true, underscores in variable names will be replaced by spaces, and the first character of each word will be uppercased
+ * @param array $options an array of options:
+ *    "includeHeader" => if true, a header will be included in the exported CSV,
+ *    "includeClassname" => if true, the class name will be included in the default generated titles,
+ *    "humanReadable" => if true, underscores in variable names will be replaced by spaces,
+ *    and the first character of each word will be uppercased
  * @return void
  */
 	public function quickExport($data, $excludePaths = array(), $customHeaders = array(), $options = array()) {
